@@ -1,0 +1,651 @@
+---
+title: "Tarea curvas de titulación - complejometría"
+author: "R.Ed."
+format: html
+editor: visual
+---
+
+## Primera curva de titulación
+
+Realizar la curva de titulación de una alícuota de 10.00 mL de la mezcla de una solución de nitrato de cobre(II) 0.0100 mol/L y nitrato de cinc 0.0100 y 10.00 mL de solución reguladora de pH 5.50 con EDTA 0.0100 mol/L,
+
+### Reacciones
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{Cu^{2+} + Y^{4-}} & \ce{<=>} & \ce{CuY^2-} & \log K_{\text{f}} = 18.76\\
+\ce{Zn^{2+} + Y^{4-}} & \ce{<=>} & \ce{ZnY^2-} & \log K_{\text{f}} = 16.50\\
+\end{array}
+$$
+
+```{r}
+beta.CuY <- 10^18.76
+beta.ZnY <- 10^16.50
+```
+
+#### Dependencia con el pH del EDTA
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{H6Y^2+ + H2O} & \ce{<=>} & \ce{H5Y+ + H3O+} & \text{p}K_{\text{a}1} = 0.0\\
+\ce{H5Y^+ + H2O} & \ce{<=>} & \ce{H4Y + H3O+} & \text{p}K_{\text{a}2} = 1.50\\
+\ce{H4Y + H2O} & \ce{<=>} & \ce{H3Y^- + H3O+} & \text{p}K_{\text{a}3} = 2.00\\
+\ce{H3Y^- + H2O} & \ce{<=>} & \ce{H2Y^2- + H3O+} & \text{p}K_{\text{a}4} = 2.69\\
+\ce{H2Y^2- + H2O} & \ce{<=>} & \ce{HY^3- + H3O+} & \text{p}K_{\text{a}5} = 6.13\\
+\ce{HY^3- + H2O} & \ce{<=>} & \ce{Y^4- + H3O+} & \text{p}K_{\text{a}6} = 10.37\\
+\end{array}
+$$
+
+```{r}
+alp <- function(pH, pKa){
+  n <- length(pKa)
+  num <- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa <- c(0.0, 1.50, 2.00, 2.69, 6.13, 10.37)
+aY <- alp(5.5, pKa)[7]
+```
+
+### Balance de masas
+
+$$\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Cu^2+}] + [\ce{CuY^2-}]\\
+c(\ce{Zn^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Zn^2+}] + [\ce{ZnY^2-}]\\
+c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}] + [\ce{ZnY^2-}]\\
+\end{array}
+$$
+
+$$\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\alpha(\ce{Zn^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{ZnY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+$$
+
+```{r}
+curva <- function(pY, V){
+  Y <- 10^-pY
+  aCu <- 1 / (1 + beta.CuY * Y)
+  aZn <- 1 / (1 + beta.ZnY * Y)
+  Cu  <- aCu * 0.1 / (20 + V)
+  Zn  <- aZn * 0.1 / (20 + V)
+  CuY <- beta.CuY * Cu * Y
+  ZnY <- beta.ZnY * Zn * Y
+  EDTA <- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY - ZnY
+}
+```
+
+### Definiendo la curva de titulación
+
+El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+
+```{r}
+V <- seq(0.05, 25.00, by = 0.01)
+```
+
+### Calculando el pY y pM para toda la curva
+
+Se calcula el valor de pY para todos los valores de titulante
+
+```{r}
+pY <- sapply(V, function(x)
+  uniroot(curva, V = x, interval = c(0, 200), tol = 1e-14)$root)
+
+```
+
+Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+
+```{r}
+Y <- 10^-pY
+aCu <- 1 / (1 + beta.CuY * Y)
+aZn <- 1 / (1 + beta.ZnY * Y)
+pCu <- -log10(aCu * 0.1 / (20 + V))
+pZn <- -log10(aZn * 0.1 / (20 + V))
+```
+
+### La gráfica
+
+se procede hacer la gráfica
+
+```{r message = FALSE, echo=FALSE}
+if (!require("tidyverse")) install.packages("tidyverse")
+df <- data.frame(V, pY, pCu, pZn) %>% 
+  pivot_longer(names_to = "key",
+               values_to = "y",
+               -V)
+fig <- ggplot(df,
+              aes(x = V, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer("", 
+                     palette = "Dark2", 
+                     direction = 1) +
+  labs(x = "Volumen de titulante / mL",
+       y = "py o pM") +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.25))
+print(fig)
+```
+
+## Segunda curva de titulación
+
+Realizar la curva de titulación de una alícuota de 10.00 mL de la mezcla de una solución de nitrato de cobre(II) 0.0100 mol/L y nitrato de magnesio 0.0100 y 10.00 mL de solución reguladora de pH 10.00 con EDTA 0.0100 mol/L,
+
+### Reacciones
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{Cu^{2+} + Y^{4-}} & \ce{<=>} & \ce{CuY^2-} & \log K_{\text{f}} = 18.76\\
+\ce{Mg^{2+} + Y^{4-}} & \ce{<=>} & \ce{MgY^2-} & \log K_{\text{f}} = 8.79\\
+\end{array}
+$$
+
+```{r}
+beta.CuY <- 10^18.76
+beta.MgY <- 10^8.79
+```
+
+#### Dependencia con el pH del EDTA
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{H6Y^2+ + H2O} & \ce{<=>} & \ce{H5Y+ + H3O+} & \text{p}K_{\text{a}1} = 0.0\\
+\ce{H5Y^+ + H2O} & \ce{<=>} & \ce{H4Y + H3O+} & \text{p}K_{\text{a}2} = 1.50\\
+\ce{H4Y + H2O} & \ce{<=>} & \ce{H3Y^- + H3O+} & \text{p}K_{\text{a}3} = 2.00\\
+\ce{H3Y^- + H2O} & \ce{<=>} & \ce{H2Y^2- + H3O+} & \text{p}K_{\text{a}4} = 2.69\\
+\ce{H2Y^2- + H2O} & \ce{<=>} & \ce{HY^3- + H3O+} & \text{p}K_{\text{a}5} = 6.13\\
+\ce{HY^3- + H2O} & \ce{<=>} & \ce{Y^4- + H3O+} & \text{p}K_{\text{a}6} = 10.37\\
+\end{array}
+$$
+
+```{r}
+alp <- function(pH, pKa){
+  n <- length(pKa)
+  num <- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa <- c(0.0, 1.50, 2.00, 2.69, 6.13, 10.37)
+aY <- alp(10.00, pKa)[7]
+```
+
+### Balance de masas
+
+$$\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Cu^2+}] + [\ce{CuY^2-}]\\
+c(\ce{Mg^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Mg^2+}] + [\ce{MgY^2-}]\\
+c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}] + [\ce{MgY^2-}]\\
+\end{array}
+$$
+
+$$\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\alpha(\ce{Mg^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{MgY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+$$
+
+```{r}
+curva <- function(pY, V){
+  Y <- 10^-pY
+  aCu <- 1 / (1 + beta.CuY * Y)
+  aMg <- 1 / (1 + beta.MgY * Y)
+  Cu  <- aCu * 0.1 / (20 + V)
+  Mg  <- aMg * 0.1 / (20 + V)
+  CuY <- beta.CuY * Cu * Y
+  MgY <- beta.MgY * Mg * Y
+  EDTA <- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY - MgY
+}
+```
+
+### Definiendo la curva de titulación
+
+El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+
+```{r}
+V <- seq(0.05, 25.00, by = 0.01)
+```
+
+### Calculando el pY y pM para toda la curva
+
+Se calcula el valor de pY para todos los valores de titulante
+
+```{r}
+pY <- sapply(V, function(x)
+  uniroot(curva, V = x, interval = c(0, 200), tol = 1e-14)$root)
+
+```
+
+Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+
+```{r}
+Y <- 10^-pY
+aCu <- 1 / (1 + beta.CuY * Y)
+aMg <- 1 / (1 + beta.MgY * Y)
+pCu <- -log10(aCu * 0.1 / (20 + V))
+pMg <- -log10(aMg * 0.1 / (20 + V))
+```
+
+### La gráfica
+
+se procede hacer la gráfica
+
+```{r message = FALSE, echo=FALSE}
+if (!require("tidyverse")) install.packages("tidyverse")
+df <- data.frame(V, pY, pCu, pMg) %>% 
+  pivot_longer(names_to = "key",
+               values_to = "y",
+               -V)
+fig <- ggplot(df,
+              aes(x = V, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer("", 
+                     palette = "Dark2", 
+                     direction = 1) +
+  labs(x = "Volumen de titulante / mL",
+       y = "py o pM") +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.25))
+print(fig)
+```
+## Tercera curva de titulación
+
+Realizar la curva de titulación de una alícuota de 10.00 mL de una solución de nitrato de cobre(II) 0.0100 mol/L y 10.00 mL de solución reguladora de pH 0, 2, 4, 6, 8, 10, 12 y 14 con EDTA 0.0100 mol/L,
+
+### Reacciones
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{Cu^{2+} + Y^{4-}} & \ce{<=>} & \ce{CuY^2-} & \log K_{\text{f}} = 18.76\\
+\end{array}
+$$
+
+```{r}
+beta.CuY <- 10^18.76
+beta.MgY <- 10^8.79
+```
+
+#### Dependencia con el pH del EDTA
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{H6Y^2+ + H2O} & \ce{<=>} & \ce{H5Y+ + H3O+} & \text{p}K_{\text{a}1} = 0.0\\
+\ce{H5Y^+ + H2O} & \ce{<=>} & \ce{H4Y + H3O+} & \text{p}K_{\text{a}2} = 1.50\\
+\ce{H4Y + H2O} & \ce{<=>} & \ce{H3Y^- + H3O+} & \text{p}K_{\text{a}3} = 2.00\\
+\ce{H3Y^- + H2O} & \ce{<=>} & \ce{H2Y^2- + H3O+} & \text{p}K_{\text{a}4} = 2.69\\
+\ce{H2Y^2- + H2O} & \ce{<=>} & \ce{HY^3- + H3O+} & \text{p}K_{\text{a}5} = 6.13\\
+\ce{HY^3- + H2O} & \ce{<=>} & \ce{Y^4- + H3O+} & \text{p}K_{\text{a}6} = 10.37\\
+\end{array}
+$$
+
+```{r}
+alp <- function(pH, pKa){
+  n <- length(pKa)
+  num <- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa <- c(0.0, 1.50, 2.00, 2.69, 6.13, 10.37)
+```
+
+### Balance de masas
+
+$$\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Cu^2+}] + [\ce{CuY^2-}]\\
+c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}]\\
+\end{array}
+$$
+
+$$\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+$$
+
+```{r}
+curva <- function(pY, V, pH){
+  Y <- 10^-pY
+  aY <- alp(pH, pKa)[7]
+  aCu <- 1 / (1 + beta.CuY * Y)
+  Cu  <- aCu * 0.1 / (20 + V)
+  CuY <- beta.CuY * Cu * Y
+  EDTA <- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY
+}
+```
+
+### Definiendo la curva de titulación
+
+El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+
+```{r}
+V <- seq(0.05, 25.00, by = 0.01)
+pH <- seq(0, 14, by = 2)
+```
+
+### Calculando el pY y pM para toda la curva
+
+Se calcula el valor de pY para todos los valores de titulante
+
+```{r}
+pY <- sapply(pH, function(xx)
+  sapply(V, function(x)
+  uniroot(curva, V = x, pH = xx, interval = c(0, 200), tol = 1e-14)$root))
+pY <- as.data.frame(pY)
+names(pY) <- c("pH00", "pH02", "pH04", "pH06", "pH08", "pH10", "pH12", "pH14")
+df <- data.frame(V, pY) %>% 
+  pivot_longer(names_to = "key",
+               values_to = "pY",
+               -V)
+```
+
+Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+
+```{r}
+df$Y <- 10^-df$pY
+df$aCu <- 1 / (1 + beta.CuY * df$Y)
+df$pCu <- -log10(df$aCu * 0.1 / (20 + df$V))
+```
+
+### La gráfica
+
+se procede hacer la gráfica
+
+```{r message = FALSE, echo=FALSE}
+if (!require("tidyverse")) install.packages("tidyverse")
+fig <- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer("pH = ",
+                     labels = seq(0, 14, by = 2),
+                     palette = "Dark2", 
+                     direction = 1) +
+  labs(x = "Volumen de titulante / mL",
+       y = "pCu") +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.5))
+print(fig)
+```
+## Cuarta curva de titulación
+
+Realizar la curva de titulación de una alícuota de 10.00 mL de una solución de nitrato de cobre(II) 0.0100 mol/L y 10.00 mL de solución reguladora de pH 10.00 que contiene amoniaco en concentraciones 0.001, 0.01 y 0.1 mol/L (omita el efecto del pH sobre el amoniaco) con EDTA 0.0100 mol/L,
+
+### Reacciones
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{Cu^{2+} + Y^{4-}} & \ce{<=>} & \ce{CuY^2-} & \log K_{\text{f}} = 18.76\\
+\ce{Cu^{2+} + NH3 } & \ce{<=>} & \ce{Cu(NH3)^2+} & \log \beta_{1} = 3.99\\
+\ce{Cu^{2+} + 2 NH3 } & \ce{<=>} & \ce{Cu(NH3)2^2+} & \log \beta_{2} = 7.33\\
+\ce{Cu^{2+} + 3 NH3 } & \ce{<=>} & \ce{Cu(NH3)3^2+} & \log \beta_{3} = 10.06\\
+\ce{Cu^{2+} + 4 NH3 } & \ce{<=>} & \ce{Cu(NH3)4^2+} & \log \beta_{4} = 12.03\\
+\end{array}
+$$
+
+```{r}
+beta.CuY <- 10^18.76
+beta.CN1 <- 10^3.99
+beta.CN2 <- 10^7.33
+beta.CN3 <- 10^10.06
+beta.CN4 <- 10^12.03
+```
+
+#### Dependencia con el pH del EDTA
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{H6Y^2+ + H2O} & \ce{<=>} & \ce{H5Y+ + H3O+} & \text{p}K_{\text{a}1} = 0.0\\
+\ce{H5Y^+ + H2O} & \ce{<=>} & \ce{H4Y + H3O+} & \text{p}K_{\text{a}2} = 1.50\\
+\ce{H4Y + H2O} & \ce{<=>} & \ce{H3Y^- + H3O+} & \text{p}K_{\text{a}3} = 2.00\\
+\ce{H3Y^- + H2O} & \ce{<=>} & \ce{H2Y^2- + H3O+} & \text{p}K_{\text{a}4} = 2.69\\
+\ce{H2Y^2- + H2O} & \ce{<=>} & \ce{HY^3- + H3O+} & \text{p}K_{\text{a}5} = 6.13\\
+\ce{HY^3- + H2O} & \ce{<=>} & \ce{Y^4- + H3O+} & \text{p}K_{\text{a}6} = 10.37\\
+\end{array}
+$$
+
+```{r}
+alp <- function(pH, pKa){
+  n <- length(pKa)
+  num <- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa <- c(0.0, 1.50, 2.00, 2.69, 6.13, 10.37)
+aY <- alp(10.00, pKa)[7]
+```
+
+### Balance de masas
+
+$$\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &=\displaystyle [\ce{Cu^2+}] + \sum_{i=1}^4 [\ce{Cu(NH3)}_i^{2+}] + [\ce{CuY^2-}]\\
+c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}]\\
+\end{array}
+$$
+
+$$\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + \displaystyle \sum_{i=1}^4 \beta_i\times [\ce{NH3}]^i + K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+$$
+
+```{r}
+curva <- function(pY, V, NH3){
+  Y <- 10^-pY
+  aCu <- 1 / (1 + beta.CuY * Y + beta.CN1 * NH3 + beta.CN2 * NH3^2 +
+                beta.CN3 * NH3^3 + beta.CN4 * NH3^4)
+  Cu  <- aCu * 0.1 / (20 + V)
+  CuY <- beta.CuY * Cu * Y
+  EDTA <- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY
+}
+```
+
+### Definiendo la curva de titulación
+
+El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+
+```{r}
+V <- seq(0.05, 25.00, by = 0.01)
+NH3 <- c(0, 0.001, 0.01, 0.1, 1)
+```
+
+### Calculando el pY y pM para toda la curva
+
+Se calcula el valor de pY para todos los valores de titulante
+
+```{r}
+pY <- sapply(NH3, function(xx)
+  sapply(V, function(x)
+  uniroot(curva, V = x, NH3 = xx, interval = c(0, 200), tol = 1e-14)$root))
+pY <- as.data.frame(pY)
+names(pY) <- c("NH30000", "NH30001", "NH30010", "NH30100", "NH31000")
+pCu <- pY
+for (i in 1:5) {
+  Y <- 10^-pY[names(pY)[i]]
+  aCu <- 1 / (1 + beta.CuY * Y + beta.CN1 * NH3[i] + beta.CN2 * NH3[i]^2 +
+                beta.CN3 * NH3[i]^3 + beta.CN4 * NH3[i]^4)
+  Cu  <- aCu * 0.1 / (20 + V)
+  pCu[names(pCu)[i]] <-  -log10(Cu)
+}
+```
+
+Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+
+```{r}
+df <- data.frame(V, pCu) %>% 
+  pivot_longer(values_to = "pCu",
+               names_to = "key",
+               -V)
+```
+
+### La gráfica
+
+se procede hacer la gráfica
+
+```{r message = FALSE, echo=FALSE}
+if (!require("tidyverse")) install.packages("tidyverse")
+fig <- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(bquote(paste("[",NH[3],"] =")),
+                     labels = c("0.000", "0.001", "0.010", "0.100", "1.000"),
+                     palette = "Dark2", 
+                     direction = 1) +
+  labs(x = "Volumen de titulante / mL",
+       y = "pCu") +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.75, 0.5))
+print(fig)
+```
+
+## Quinta curva de titulación
+
+Realizar la curva de titulación de una alícuota de 10.00 mL de una solución de nitrato de cobre(II) 0.0100 mol/L y 10.00 mL de solución reguladora de pH 10.00 que contiene cianuro en concentraciones 0.001, 0.01 y 0.1 mol/L (omita el efecto del pH sobre el cianuro) con EDTA 0.0100 mol/L,
+
+### Reacciones
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{Cu^{2+} + Y^{4-}} & \ce{<=>} & \ce{CuY^2-} & \log K_{\text{f}} = 18.76\\
+\ce{Cu^{2+} + 2 CN^- } & \ce{<=>} & \ce{Cu(CN)2} & \log \beta_{2} = 24.00\\
+\ce{Cu^{2+} + 3 CN^- } & \ce{<=>} & \ce{Cu(CN)3^-} & \log \beta_{3} = 28.60\\
+\ce{Cu^{2+} + 4 CN^- } & \ce{<=>} & \ce{Cu(CN)4^2-} & \log \beta_{4} = 30.30\\
+\end{array}
+$$
+
+```{r}
+beta.CuY <- 10^18.76
+beta.CN2 <- 10^24.00
+beta.CN3 <- 10^28.60
+beta.CN4 <- 10^30.30
+```
+
+#### Dependencia con el pH del EDTA
+
+$$\require{mhchem}
+\begin{array}{rcll}
+\ce{H6Y^2+ + H2O} & \ce{<=>} & \ce{H5Y+ + H3O+} & \text{p}K_{\text{a}1} = 0.0\\
+\ce{H5Y^+ + H2O} & \ce{<=>} & \ce{H4Y + H3O+} & \text{p}K_{\text{a}2} = 1.50\\
+\ce{H4Y + H2O} & \ce{<=>} & \ce{H3Y^- + H3O+} & \text{p}K_{\text{a}3} = 2.00\\
+\ce{H3Y^- + H2O} & \ce{<=>} & \ce{H2Y^2- + H3O+} & \text{p}K_{\text{a}4} = 2.69\\
+\ce{H2Y^2- + H2O} & \ce{<=>} & \ce{HY^3- + H3O+} & \text{p}K_{\text{a}5} = 6.13\\
+\ce{HY^3- + H2O} & \ce{<=>} & \ce{Y^4- + H3O+} & \text{p}K_{\text{a}6} = 10.37\\
+\end{array}
+$$
+
+```{r}
+alp <- function(pH, pKa){
+  n <- length(pKa)
+  num <- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa <- c(0.0, 1.50, 2.00, 2.69, 6.13, 10.37)
+aY <- alp(10.00, pKa)[7]
+```
+
+### Balance de masas
+
+$$\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &=\displaystyle [\ce{Cu^2+}] + \sum_{i=2}^4 [\ce{Cu(CN)}_i^{2-i}] + [\ce{CuY^2-}]\\
+c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}]\\
+\end{array}
+$$
+
+$$\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + \displaystyle \sum_{i=2}^4 \beta_i \times [\ce{CN^-}]^i +  K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+$$
+
+```{r}
+curva <- function(pY, V, CN){
+  Y <- 10^-pY
+  aCu <- 1 / (1 + beta.CuY * Y  + beta.CN2 * CN^2 +
+                beta.CN3 * CN^3 + beta.CN4 * CN^4)
+  Cu  <- aCu * 0.1 / (20 + V)
+  CuY <- beta.CuY * Cu * Y
+  EDTA <- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY
+}
+```
+
+### Definiendo la curva de titulación
+
+El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+
+```{r}
+V <- seq(0.05, 25.00, by = 0.01)
+CN <- c(0, 0.001, 0.01, 0.1, 1)
+```
+
+### Calculando el pY y pM para toda la curva
+
+Se calcula el valor de pY para todos los valores de titulante
+
+```{r}
+pY <- sapply(CN, function(xx)
+  sapply(V, function(x)
+  uniroot(curva, V = x, CN = xx, interval = c(0, 200), tol = 1e-14)$root))
+pY <- as.data.frame(pY)
+names(pY) <- c("CN0000", "CN0001", "CN0010", "CN0100", "CN1000")
+pCu <- pY
+for (i in 1:5) {
+  Y <- 10^-pY[names(pY)[i]]
+  aCu <- 1 / (1 + beta.CuY * Y + beta.CN2 * CN[i]^2 +
+                beta.CN3 * CN[i]^3 + beta.CN4 * CN[i]^4)
+  Cu  <- aCu * 0.1 / (20 + V)
+  pCu[names(pCu)[i]] <-  -log10(Cu)
+}
+```
+
+Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+
+```{r}
+df <- data.frame(V, pCu) %>% 
+  pivot_longer(values_to = "pCu",
+               names_to = "key",
+               -V)
+```
+
+### La gráfica
+
+se procede hacer la gráfica
+
+```{r message = FALSE, echo=FALSE}
+if (!require("tidyverse")) install.packages("tidyverse")
+fig <- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(bquote(paste("[",CN^"-","] =")),
+                     labels = c("0.000", "0.001", "0.010", "0.100", "1.000"),
+                     palette = "Dark2", 
+                     direction = 1) +
+  labs(x = "Volumen de titulante / mL",
+       y = "pCu") +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.75, 0.25))
+print(fig)
+```
