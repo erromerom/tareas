@@ -82,7 +82,7 @@ El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
 V <- seq(0.05, 25.00, by = 0.01)
 ```
 
-### Calculando el pY y pM para toda la curva
+### Calculando pY y pM
 
 Se calcula el valor de pY para todos los valores de titulante
 
@@ -209,7 +209,7 @@ El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
 V <- seq(0.05, 25.00, by = 0.01)
 ```
 
-### Calculando el pY y pM para toda la curva
+### Calculando pY y pM
 
 Se calcula el valor de pY para todos los valores de titulante
 
@@ -331,7 +331,7 @@ V <- seq(0.05, 25.00, by = 0.01)
 pH <- seq(0, 14, by = 2)
 ```
 
-### Calculando el pY y pM para toda la curva
+### Calculando pM
 
 Se calcula el valor de pY para todos los valores de titulante
 
@@ -462,7 +462,7 @@ V <- seq(0.05, 25.00, by = 0.01)
 NH3 <- c(0, 0.001, 0.01, 0.1, 1)
 ```
 
-### Calculando el pY y pM para toda la curva
+### Calculando pM
 
 Se calcula el valor de pY para todos los valores de titulante
 
@@ -596,7 +596,7 @@ V <- seq(0.05, 25.00, by = 0.01)
 CN <- c(0, 0.001, 0.01, 0.1, 1)
 ```
 
-### Calculando el pY y pM para toda la curva
+### Calculando pM
 
 Se calcula el valor de pY para todos los valores de titulante
 

@@ -9,5 +9,6 @@ navbar:
       href: Tareas.html
 output:
   html_document:
-    theme: united
-    highlight: textmate
+    theme: darkly
+    toc: true
+    toc_float: true
