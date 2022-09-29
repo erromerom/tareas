@@ -1,0 +1,13 @@
+name: "my-website"
+output_dir: "docs"
+navbar:
+  title: "PAQ - 202201"
+  left:
+    - text: "Inicio"
+      href: index.html
+    - text: "Curva de Titulación complejos"
+      href: Tareas.html
+output:
+  html_document:
+    theme: united
+    highlight: textmate
