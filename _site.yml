@@ -5,6 +5,8 @@ navbar:
   left:
     - text: "Inicio"
       href: index.html
+    - text: "Distribución de especies Ag-NH3"
+      href: Complejos_Ag_NH3_pH.html
     - text: "Curva de Titulación complejos"
       href: Tareas.html
 output:

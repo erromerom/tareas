@@ -11,7 +11,7 @@
 
 
 
-<title>My Website</title>
+<title>Tarea curvas curvas de desitribucón de especies</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -346,12 +346,125 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">My Website</h1>
+<h1 class="title toc-ignore">Tarea curvas curvas de desitribucón de
+especies</h1>
 
 </div>
 
 
-<p>Hello, Website!</p>
+<div id="primera-curva-de-titulación" class="section level2">
+<h2>Primera curva de titulación</h2>
+<p>Calcule la curva de distribución de especies de los complejos del ion
+plata con amoniaco en función del pH. Asuma que <span
+class="math inline">\(\require{mhchem}c(\ce{Ag+}) =\)</span> 0.0100
+mol/L y <span class="math inline">\(c(\ce{NH3}) =\)</span> 0.100
+mol/L.</p>
+<div id="reacciones" class="section level3">
+<h3>Reacciones</h3>
+<p><span class="math display">\[
+\begin{array}{rcll}
+\ce{Ag^{+} + NH3} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(NH3)^+} &amp; \log
+\beta_1 = 3.32\\
+\ce{Ag^+ + 2 NH3} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(NH3)2^+} &amp; \log
+\beta_2 = 7.24\\
+\end{array}
+\]</span></p>
+<pre class="r"><code>beta.1 &lt;- 10^3.32
+beta.2 &lt;- 10^7.24</code></pre>
+<div id="dependencia-con-el-ph-del-amoniaco" class="section level4">
+<h4>Dependencia con el pH del amoniaco</h4>
+<p><span class="math display">\[\require{mhchem}
+\begin{array}{rcll}
+\ce{NH4^+ + H2O} &amp; \ce{&lt;=&gt;} &amp; \ce{MH3 + H3O+} &amp;
+\text{p}K_{\text{a}} = 9.24\\
+\end{array}
+\]</span></p>
+<pre class="r"><code>alp &lt;- function(pH, pKa){
+  n &lt;- length(pKa)
+  num &lt;- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
+  num / sum(num)
+}
+pKa &lt;- c(9.24)</code></pre>
+</div>
+</div>
+<div id="balance-de-masas" class="section level3">
+<h3>Balance de masas</h3>
+<p><span class="math display">\[\require{mhchem}
+\begin{array}{rll}
+c(\ce{Cu^2+}) &amp;=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 +
+V} &amp;= [\ce{Cu^2+}] + [\ce{CuY^2-}]\\
+c(\ce{Zn^2+}) &amp;=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 +
+V} &amp;= [\ce{Zn^2+}] + [\ce{ZnY^2-}]\\
+c(\ce{EDTA}) &amp;=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V}
+&amp;= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}] +
+[\ce{ZnY^2-}]\\
+\end{array}
+\]</span></p>
+<p><span class="math display">\[\require{mhchem}
+\begin{array}{rl}
+\alpha(\ce{Cu^2+}) &amp;=\displaystyle  \cfrac{1}{1 +
+K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
+\alpha(\ce{Zn^2+}) &amp;=\displaystyle  \cfrac{1}{1 +
+K_{\text{f}}(\ce{ZnY^2-})\times [\ce{Y^4-}]}  \\
+\end{array}
+\]</span></p>
+<pre class="r"><code>curva &lt;- function(pY, V){
+  Y &lt;- 10^-pY
+  aCu &lt;- 1 / (1 + beta.CuY * Y)
+  aZn &lt;- 1 / (1 + beta.ZnY * Y)
+  Cu  &lt;- aCu * 0.1 / (20 + V)
+  Zn  &lt;- aZn * 0.1 / (20 + V)
+  CuY &lt;- beta.CuY * Cu * Y
+  ZnY &lt;- beta.ZnY * Zn * Y
+  EDTA &lt;- 0.01 * V / (20 + V)
+  EDTA - Y / aY - CuY - ZnY
+}</code></pre>
+</div>
+<div id="definiendo-la-curva-de-titulación" class="section level3">
+<h3>Definiendo la curva de titulación</h3>
+<p>El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01
+mL.</p>
+<pre class="r"><code>V &lt;- seq(0.05, 25.00, by = 0.01)</code></pre>
+</div>
+<div id="calculando-py-y-pm" class="section level3">
+<h3>Calculando pY y pM</h3>
+<p>Se calcula el valor de pY para todos los valores de titulante</p>
+<pre class="r"><code>pY &lt;- sapply(V, function(x)
+  uniroot(curva, V = x, interval = c(0, 200), tol = 1e-14)$root)</code></pre>
+<p>Con el valor de pY se calcula las concentraciones en equilibrio de
+los cationes de cobre y cinc.</p>
+<pre class="r"><code>Y &lt;- 10^-pY
+aCu &lt;- 1 / (1 + beta.CuY * Y)
+aZn &lt;- 1 / (1 + beta.ZnY * Y)
+pCu &lt;- -log10(aCu * 0.1 / (20 + V))
+pZn &lt;- -log10(aZn * 0.1 / (20 + V))</code></pre>
+</div>
+<div id="la-gráfica" class="section level3">
+<h3>La gráfica</h3>
+<p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+df &lt;- data.frame(V, pY, pCu, pZn) %&gt;% 
+  pivot_longer(names_to = &quot;key&quot;,
+               values_to = &quot;y&quot;,
+               -V)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(&quot;&quot;, 
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;py o pM&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.25))
+print(fig)</code></pre>
+<p><img src="Complejos_Ag_NH3_pH_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+</div>
 
 
 
