@@ -106,7 +106,7 @@ pZn <- -log10(aZn * 0.1 / (20 + V))
 
 se procede hacer la gráfica
 
-```{r message = FALSE, echo=FALSE}
+```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
 df <- data.frame(V, pY, pCu, pZn) %>% 
   pivot_longer(names_to = "key",
@@ -233,7 +233,7 @@ pMg <- -log10(aMg * 0.1 / (20 + V))
 
 se procede hacer la gráfica
 
-```{r message = FALSE, echo=FALSE}
+```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
 df <- data.frame(V, pY, pCu, pMg) %>% 
   pivot_longer(names_to = "key",
@@ -359,7 +359,7 @@ df$pCu <- -log10(df$aCu * 0.1 / (20 + df$V))
 
 se procede hacer la gráfica
 
-```{r message = FALSE, echo=FALSE}
+```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
 fig <- ggplot(df,
               aes(x = V, 
@@ -495,7 +495,7 @@ df <- data.frame(V, pCu) %>%
 
 se procede hacer la gráfica
 
-```{r message = FALSE, echo=FALSE}
+```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
 fig <- ggplot(df,
               aes(x = V, 
@@ -629,7 +629,7 @@ df <- data.frame(V, pCu) %>%
 
 se procede hacer la gráfica
 
-```{r message = FALSE, echo=FALSE}
+```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
 fig <- ggplot(df,
               aes(x = V, 

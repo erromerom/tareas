@@ -449,6 +449,26 @@ pZn &lt;- -log10(aZn * 0.1 / (20 + V))</code></pre>
 <div id="la-gráfica" class="section level3">
 <h3>La gráfica</h3>
 <p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+df &lt;- data.frame(V, pY, pCu, pZn) %&gt;% 
+  pivot_longer(names_to = &quot;key&quot;,
+               values_to = &quot;y&quot;,
+               -V)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(&quot;&quot;, 
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;py o pM&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.25))
+print(fig)</code></pre>
 <p><img src="Tareas_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 </div>
@@ -552,6 +572,26 @@ pMg &lt;- -log10(aMg * 0.1 / (20 + V))</code></pre>
 <div id="la-gráfica-1" class="section level3">
 <h3>La gráfica</h3>
 <p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+df &lt;- data.frame(V, pY, pCu, pMg) %&gt;% 
+  pivot_longer(names_to = &quot;key&quot;,
+               values_to = &quot;y&quot;,
+               -V)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(&quot;&quot;, 
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;py o pM&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.25))
+print(fig)</code></pre>
 <p><img src="Tareas_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 </div>
@@ -650,6 +690,23 @@ df$pCu &lt;- -log10(df$aCu * 0.1 / (20 + df$V))</code></pre>
 <div id="la-gráfica-2" class="section level3">
 <h3>La gráfica</h3>
 <p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(&quot;pH = &quot;,
+                     labels = seq(0, 14, by = 2),
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;pCu&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.15, 0.5))
+print(fig)</code></pre>
 <p><img src="Tareas_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 </div>
 </div>
@@ -769,6 +826,23 @@ los cationes de cobre y cinc.</p>
 <div id="la-gráfica-3" class="section level3">
 <h3>La gráfica</h3>
 <p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(bquote(paste(&quot;[&quot;,NH[3],&quot;] =&quot;)),
+                     labels = c(&quot;0.000&quot;, &quot;0.001&quot;, &quot;0.010&quot;, &quot;0.100&quot;, &quot;1.000&quot;),
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;pCu&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.75, 0.5))
+print(fig)</code></pre>
 <p><img src="Tareas_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 </div>
 </div>
@@ -885,6 +959,23 @@ los cationes de cobre y cinc.</p>
 <div id="la-gráfica-4" class="section level3">
 <h3>La gráfica</h3>
 <p>se procede hacer la gráfica</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+fig &lt;- ggplot(df,
+              aes(x = V, 
+                  y = pCu, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(bquote(paste(&quot;[&quot;,CN^&quot;-&quot;,&quot;] =&quot;)),
+                     labels = c(&quot;0.000&quot;, &quot;0.001&quot;, &quot;0.010&quot;, &quot;0.100&quot;, &quot;1.000&quot;),
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;pCu&quot;) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.75, 0.25))
+print(fig)</code></pre>
 <p><img src="Tareas_files/figure-html/unnamed-chunk-35-1.png" width="672" /></p>
 </div>
 </div>
