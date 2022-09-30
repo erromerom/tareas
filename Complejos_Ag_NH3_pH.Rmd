@@ -40,61 +40,57 @@ pKa <- c(9.24)
 
 ### Balance de masas
 
-$$\require{mhchem}
-\begin{array}{rll}
-c(\ce{Cu^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Cu^2+}] + [\ce{CuY^2-}]\\
-c(\ce{Zn^2+}) &=\displaystyle 0.0100  \times \cfrac{10.00}{20.00 + V} &= [\ce{Zn^2+}] + [\ce{ZnY^2-}]\\
-c(\ce{EDTA}) &=\displaystyle 0.0100  \times \cfrac{V}{20.00 + V} &= \cfrac{[\ce{Y^4-}]}{\alpha(\ce{Y^4-})} + [\ce{CuY^2-}] + [\ce{ZnY^2-}]\\
+$$
+\begin{array}{rl}
+c(\ce{Ag^+}) &= [\ce{Ag^+}] + [\ce{Ag(NH3)+}] + [\ce{Ag(NH3)2+}]\\
+c(\ce{NH3})  &= \cfrac{[\ce{NH3}]}{\alpha(\ce{NH3})}  + [\ce{Ag(NH3)+}] + 2\times [\ce{Ag(NH3)2+}]\\
 \end{array}
 $$
 
-$$\require{mhchem}
+$$
 \begin{array}{rl}
-\alpha(\ce{Cu^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{CuY^2-})\times [\ce{Y^4-}]}  \\
-\alpha(\ce{Zn^2+}) &=\displaystyle  \cfrac{1}{1 + K_{\text{f}}(\ce{ZnY^2-})\times [\ce{Y^4-}]}  \\
+\alpha(\ce{Ag+}) &=\displaystyle  \cfrac{1}{1 + \beta_1\times [\ce{NH3}]+ \beta_2\times [\ce{NH3}]^2}  \\
 \end{array}
 $$
 
 ```{r}
-curva <- function(pY, V){
-  Y <- 10^-pY
-  aCu <- 1 / (1 + beta.CuY * Y)
-  aZn <- 1 / (1 + beta.ZnY * Y)
-  Cu  <- aCu * 0.1 / (20 + V)
-  Zn  <- aZn * 0.1 / (20 + V)
-  CuY <- beta.CuY * Cu * Y
-  ZnY <- beta.ZnY * Zn * Y
-  EDTA <- 0.01 * V / (20 + V)
-  EDTA - Y / aY - CuY - ZnY
+curva <- function(pNH3, pH){
+  NH3 <- 10^-pNH3
+  aNH3 <- alp(pH, pKa)[2]
+  aAg <- 1 / (1 + beta.1 * NH3 + beta.2 * NH3^2)
+  Ag  <- aAg * 0.01
+  AgNH3 <- beta.1 * Ag * NH3
+  AgNH32 <- beta.2 * Ag * NH3^2
+  0.1 - NH3 / aNH3 - AgNH3 - 2 * AgNH32
 }
 ```
 
-### Definiendo la curva de titulación
+### Definiendo los valores de pH
 
-El volumen se calculará entre 0.05 y 25.00 mL con intervalos de 0.01 mL.
+El pH cambiará entre 0 y 14.
 
 ```{r}
-V <- seq(0.05, 25.00, by = 0.01)
+pH <- seq(0, 14, by = 0.01)
 ```
 
-### Calculando pY y pM
+### Calculando pAg y pNH3
 
-Se calcula el valor de pY para todos los valores de titulante
+Se calcula el valor de pNH3 para todos los valores pH
 
 ```{r}
-pY <- sapply(V, function(x)
-  uniroot(curva, V = x, interval = c(0, 200), tol = 1e-14)$root)
+pNH3 <- sapply(pH, function(x)
+  uniroot(curva, pH = x, interval = c(0, 200), tol = 1e-14)$root)
 
 ```
 
-Con el valor de pY se calcula las concentraciones en equilibrio de los cationes de cobre y cinc.
+Con el valor de pNH3 se calcula las concentraciones en equilibrio de todas es especies en equilibrio.
 
 ```{r}
-Y <- 10^-pY
-aCu <- 1 / (1 + beta.CuY * Y)
-aZn <- 1 / (1 + beta.ZnY * Y)
-pCu <- -log10(aCu * 0.1 / (20 + V))
-pZn <- -log10(aZn * 0.1 / (20 + V))
+NH3 <- 10^-pNH3
+aAg <- 1 / (1 + beta.1 * NH3 + beta.2 * NH3^2)
+Ag  <- aAg * 0.01
+aAgNH3 <- beta.1 * Ag * NH3 / 0.01
+aAgNH32 <- beta.2 * Ag * NH3^2 / 0.01
 ```
 
 ### La gráfica
@@ -103,24 +99,30 @@ se procede hacer la gráfica
 
 ```{r message = FALSE}
 if (!require("tidyverse")) install.packages("tidyverse")
-df <- data.frame(V, pY, pCu, pZn) %>% 
+df <- data.frame(x = pH, aAg, aAgNH3, aAgNH32) %>% 
   pivot_longer(names_to = "key",
                values_to = "y",
-               -V)
+               -x)
 fig <- ggplot(df,
-              aes(x = V, 
+              aes(x = x, 
                   y = y, 
                   colour = key)
               ) +
   geom_line(size = 1L) +
-  scale_color_brewer("", 
+  scale_color_brewer("",
+                     labels = c(bquote(paste(alpha, "(",Ag^"+",")")),
+                                bquote(paste(alpha, "(Ag(N", H[3],")"[1]^"+",")")),
+                                bquote(paste(alpha, "(Ag(N", H[3],")"[2]^"+",")"))
+                                ),
                      palette = "Dark2", 
                      direction = 1) +
-  labs(x = "Volumen de titulante / mL",
-       y = "py o pM") +
+  scale_x_continuous(breaks = 0:14) + 
+  scale_y_continuous(breaks = seq(0, 1, by = 0.1)) +
+  labs(x = "pH",
+       y = bquote(alpha)) +
   theme_bw() + 
   theme(text = element_text(size = 16),
-        legend.position = c(0.15, 0.25))
+        legend.position = c(0.15, 0.5))
 print(fig)
 ```
 
