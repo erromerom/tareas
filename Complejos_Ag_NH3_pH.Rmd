@@ -4,8 +4,7 @@ title: "Tarea curvas curvas de desitribucón de especies"
 
 ## Primera curva de titulación
 
-Calcule la curva de distribución de especies de los complejos del ion plata con amoniaco en función del pH.
-Asuma que $\require{mhchem}c(\ce{Ag+}) =$ 0.0100 mol/L y $c(\ce{NH3}) =$ 0.100 mol/L.
+Calcule la curva de distribución de especies de los complejos del ion plata con amoniaco en función del pH. Asuma que $\require{mhchem}c(\ce{Ag+}) =$ 0.0100 mol/L y $c(\ce{NH3}) =$ 0.100 mol/L.
 
 ### Reacciones
 
@@ -125,5 +124,3 @@ fig <- ggplot(df,
         legend.position = c(0.15, 0.5))
 print(fig)
 ```
-
-
