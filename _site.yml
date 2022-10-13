@@ -9,6 +9,8 @@ navbar:
       href: Complejos_Ag_NH3_pH.html
     - text: "Curva de Titulación complejos"
       href: Tareas.html
+    - text: "Solubilidad y pH"
+      href: Solubilidad_pH.html
 output:
   html_document:
     theme: darkly

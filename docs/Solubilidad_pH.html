@@ -11,7 +11,7 @@
 
 
 
-<title>Tarea curvas curvas de desitribucón de especies</title>
+<title>Solubilidad en función del pH</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -349,121 +349,25 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Tarea curvas curvas de desitribucón de
-especies</h1>
+<h1 class="title toc-ignore">Solubilidad en función del pH</h1>
 
 </div>
 
 
-<div id="primera-curva-de-titulación" class="section level2">
-<h2>Primera curva de titulación</h2>
-<p>Calcule la curva de distribución de especies de los complejos del ion
-plata con amoniaco en función del pH. Asuma que <span
-class="math inline">\(\require{mhchem}c(\ce{Ag+}) =\)</span> 0.0100
-mol/L y <span class="math inline">\(c(\ce{NH3}) =\)</span> 0.100
-mol/L.</p>
-<div id="reacciones" class="section level3">
-<h3>Reacciones</h3>
-<p><span class="math display">\[
-\begin{array}{rcll}
-\ce{Ag^{+} + NH3} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(NH3)^+} &amp; \log
-\beta_1 = 3.32\\
-\ce{Ag^+ + 2 NH3} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(NH3)2^+} &amp; \log
-\beta_2 = 7.24\\
-\end{array}
-\]</span></p>
-<pre class="r"><code>beta.1 &lt;- 10^3.32
-beta.2 &lt;- 10^7.24</code></pre>
-<div id="dependencia-con-el-ph-del-amoniaco" class="section level4">
-<h4>Dependencia con el pH del amoniaco</h4>
-<p><span class="math display">\[\require{mhchem}
-\begin{array}{rcll}
-\ce{NH4^+ + H2O} &amp; \ce{&lt;=&gt;} &amp; \ce{MH3 + H3O+} &amp;
-\text{p}K_{\text{a}} = 9.24\\
-\end{array}
-\]</span></p>
-<pre class="r"><code>alp &lt;- function(pH, pKa){
-  n &lt;- length(pKa)
-  num &lt;- 10^-(pH * (n:0) + cumsum(c(0,pKa)))
-  num / sum(num)
-}
-pKa &lt;- c(9.24)</code></pre>
-</div>
-</div>
-<div id="balance-de-masas" class="section level3">
-<h3>Balance de masas</h3>
-<p><span class="math display">\[
-\begin{array}{rl}
-c(\ce{Ag^+}) &amp;= [\ce{Ag^+}] + [\ce{Ag(NH3)+}] + [\ce{Ag(NH3)2+}]\\
-c(\ce{NH3})  &amp;= \cfrac{[\ce{NH3}]}{\alpha(\ce{NH3})}  +
-[\ce{Ag(NH3)+}] + 2\times [\ce{Ag(NH3)2+}]\\
-\end{array}
-\]</span></p>
-<p><span class="math display">\[
-\begin{array}{rl}
-\alpha(\ce{Ag+}) &amp;=\displaystyle  \cfrac{1}{1 + \beta_1\times
-[\ce{NH3}]+ \beta_2\times [\ce{NH3}]^2}  \\
-\end{array}
-\]</span></p>
-<pre class="r"><code>curva &lt;- function(pNH3, pH){
-  NH3 &lt;- 10^-pNH3
-  aNH3 &lt;- alp(pH, pKa)[2]
-  aAg &lt;- 1 / (1 + beta.1 * NH3 + beta.2 * NH3^2)
-  Ag  &lt;- aAg * 0.01
-  AgNH3 &lt;- beta.1 * Ag * NH3
-  AgNH32 &lt;- beta.2 * Ag * NH3^2
-  0.1 - NH3 / aNH3 - AgNH3 - 2 * AgNH32
-}</code></pre>
-</div>
-<div id="definiendo-los-valores-de-ph" class="section level3">
-<h3>Definiendo los valores de pH</h3>
-<p>El pH cambiará entre 0 y 14.</p>
-<pre class="r"><code>pH &lt;- seq(0, 14, by = 0.01)</code></pre>
-</div>
-<div id="calculando-pag-y-pnh3" class="section level3">
-<h3>Calculando pAg y pNH3</h3>
-<p>Se calcula el valor de pNH3 para todos los valores pH</p>
-<pre class="r"><code>pNH3 &lt;- sapply(pH, function(x)
-  uniroot(curva, pH = x, interval = c(0, 200), tol = 1e-14)$root)</code></pre>
-<p>Con el valor de pNH3 se calcula las concentraciones en equilibrio de
-todas es especies en equilibrio.</p>
-<pre class="r"><code>NH3 &lt;- 10^-pNH3
-aAg &lt;- 1 / (1 + beta.1 * NH3 + beta.2 * NH3^2)
-Ag  &lt;- aAg * 0.01
-aAgNH3 &lt;- beta.1 * Ag * NH3 / 0.01
-aAgNH32 &lt;- beta.2 * Ag * NH3^2 / 0.01</code></pre>
-</div>
-<div id="la-gráfica" class="section level3">
-<h3>La gráfica</h3>
-<p>se procede hacer la gráfica</p>
-<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
-df &lt;- data.frame(x = pH, aAg, aAgNH3, aAgNH32) %&gt;% 
-  pivot_longer(names_to = &quot;key&quot;,
-               values_to = &quot;y&quot;,
-               -x)
-fig &lt;- ggplot(df,
-              aes(x = x, 
-                  y = y, 
-                  colour = key)
-              ) +
-  geom_line(size = 1L) +
-  scale_color_brewer(&quot;&quot;,
-                     labels = c(bquote(paste(alpha, &quot;(&quot;,Ag^&quot;+&quot;,&quot;)&quot;)),
-                                bquote(paste(alpha, &quot;(Ag(N&quot;, H[3],&quot;)&quot;[1]^&quot;+&quot;,&quot;)&quot;)),
-                                bquote(paste(alpha, &quot;(Ag(N&quot;, H[3],&quot;)&quot;[2]^&quot;+&quot;,&quot;)&quot;))
-                                ),
-                     palette = &quot;Dark2&quot;, 
-                     direction = 1) +
-  scale_x_continuous(breaks = 0:14) + 
-  scale_y_continuous(breaks = seq(0, 1, by = 0.1)) +
-  labs(x = &quot;pH&quot;,
-       y = bquote(alpha)) +
-  theme_bw() + 
-  theme(text = element_text(size = 16),
-        legend.position = c(0.15, 0.5))
-print(fig)</code></pre>
-<p><img src="Complejos_Ag_NH3_pH_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-</div>
+<div id="ejercicio" class="section level2">
+<h2>Ejercicio</h2>
+<p><span class="math inline">\(\require{mhchem}\)</span></p>
+<p>Construya la curva de solubilidad del <span
+class="math inline">\(\ce{AgCl}\)</span>, <span
+class="math inline">\(\ce{Ag2CrO4}\)</span> y <span
+class="math inline">\(\ce{Ag3PO4}\)</span> en función del pH. Considere
+los siguientes complejos para el ion plata(I).</p>
+<p><span class="math display">\[\begin{array}{rcll}
+    \ce{Ag^+ + HO^{-}} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(OH)(ac)} &amp;
+\log\beta_1 = 2.00\\
+    \ce{Ag^+ + 2 HO^{-}} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(OH)2^{-}(ac)}
+&amp; \log\beta_2 = 3.99\\
+\end{array} \]</span></p>
 </div>
 
 

@@ -1,0 +1,30 @@
+---
+title: "Solubilidad en función del pH"
+---
+
+## Ejercicio
+
+$\require{mhchem}$ 
+
+Construya la curva de solubilidad del $\ce{AgCl}$, $\ce{Ag2CrO4}$ y $\ce{Ag3PO4}$ en función del pH. Considere los siguientes complejos para el ion plata(I).
+
+$$\begin{array}{rcll}
+    \ce{Ag^+ + HO^{-}} & \ce{<=>} & \ce{Ag(OH)(ac)} & \log\beta_1 = 2.00\\
+    \ce{Ag^+ + 2 HO^{-}} & \ce{<=>} & \ce{Ag(OH)2^{-}(ac)} & \log\beta_2 = 3.99\\
+\end{array} $$
+
+### Cloruro de plata
+
+$$\begin{array}{rcll}
+    \ce{AgCl(s)} & \ce{<=>} & \ce{Ag^{+}(ac) + Cl^{-}(ac) } & \text{p}K_{\text{s}} = 9.74\\
+\end{array} $$
+
+$$\begin{array}{rl}
+    S & = [\ce{Ag^{+}}] + [\ce{Ag(OH)}] + [\ce{Ag(OH)2^{-}}] \\
+    S & = [\ce{Cl^{-}}] \\
+\end{array} $$
+
+$$\begin{array}{rl}
+    S & = [\ce{Ag^{+}}] + [\ce{Ag(OH)}] + [\ce{Ag(OH)2^{-}}] \\
+    S & = [\ce{Cl^{-}}] \\
+\end{array} $$
