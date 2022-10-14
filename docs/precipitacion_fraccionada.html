@@ -11,7 +11,7 @@
 
 
 
-<title>Solubilidad en función del pH</title>
+<title>Curva de precipitación fraccionada</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -355,104 +355,114 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">Solubilidad en función del pH</h1>
+<h1 class="title toc-ignore">Curva de precipitación fraccionada</h1>
 
 </div>
 
 
-<div id="ejercicio" class="section level2">
-<h2>Ejercicio</h2>
+<div id="ejercicio-1" class="section level2">
+<h2>Ejercicio 1</h2>
 <p><span class="math inline">\(\require{mhchem}\)</span></p>
-<p>Construya la curva de solubilidad del <span
-class="math inline">\(\ce{AgCl}\)</span>, <span
-class="math inline">\(\ce{Ag2CrO4}\)</span> y <span
-class="math inline">\(\ce{Ag3PO4}\)</span> en función del pH. Considere
-los siguientes complejos para el ion plata(I).</p>
-<p><span class="math display">\[\begin{array}{rcll}
-    \ce{Ag^+ + HO^{-}} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(OH)(ac)} &amp;
-\log\beta_1 = 2.00\\
-    \ce{Ag^+ + 2 HO^{-}} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag(OH)2^{-}(ac)}
-&amp; \log\beta_2 = 3.99\\
-\end{array} \]</span></p>
-<div id="cloruro-de-plata" class="section level3">
-<h3>Cloruro de plata</h3>
-<p><span class="math display">\[\begin{array}{rcll}
-    \ce{AgCl(s)} &amp; \ce{&lt;=&gt;} &amp; \ce{Ag^{+}(ac) + Cl^{-}(ac)
-} &amp; \text{p}K_{\text{s}} = 9.74\\
+<p>Calcule la curva de precipitación fraccionada de la siguiente mezcla
+de sales: <span class="math inline">\(\ce{KCl}\)</span>, <span
+class="math inline">\(\ce{KBr}\)</span> y <span
+class="math inline">\(\ce{KI}\)</span>, con <span
+class="math inline">\(\ce{AgNO3}\)</span> cambiando el pAg desde 0 hasta
+20.</p>
+<p><span class="math display">\[\begin{array}{rcl}
+    \ce{KCl + AgNO3} &amp; \ce{-&gt;} &amp; \ce{AgCl(s) + KNO3(ac)} \\
+    \ce{KBr + AgNO3} &amp; \ce{-&gt;} &amp; \ce{AgBr(s) + KNO3(ac)} \\
+    \ce{KI + AgNO3}  &amp; \ce{-&gt;} &amp; \ce{AgI(s) + KNO3(ac)} \\
 \end{array} \]</span></p>
 <p><span class="math display">\[\begin{array}{rl}
-    S &amp; = [\ce{Ag^{+}}] + [\ce{Ag(OH)}] + [\ce{Ag(OH)2^{-}}] \\
-    \alpha(\ce{Ag^+})\times S &amp; = [\ce{Ag^{+}}]\\
-    S &amp; = [\ce{Cl^{-}}] \\
+    [\ce{Ag^+}] &amp; = \displaystyle 10^{-\ce{pAg}} \\
+    [\ce{Cl^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgCl})}{[\ce{Ag^+}]} \leq c(\ce{KCl})\\
+    [\ce{Br^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgBr})}{[\ce{Ag^+}]} \leq c(\ce{KBr})\\
+    [\ce{I^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgI})}{[\ce{Ag^+}]} \leq c(\ce{KI})\\
 \end{array} \]</span></p>
-<p><span class="math display">\[\begin{array}{rl}
-    K_{\text{s}} &amp; = [\ce{Ag^{+}}][\ce{Cl^{-}}] \\
-    &amp;= \alpha(\ce{Ag^+})\times S \times S
-    &amp;= \alpha(\ce{Ag^+})\times S^2
-\end{array} \]</span></p>
-<p><span class="math display">\[S =
-\left(\cfrac{K_{\text{s}}}{\alpha(\ce{Ag^+})}\right)^{\cfrac{1}{2}}\]</span></p>
-</div>
-<div id="cromato-de-plata" class="section level3">
-<h3>Cromato de plata</h3>
-<p><span class="math display">\[\begin{array}{rcll}
-    \ce{Ag2CrO4(s)} &amp; \ce{&lt;=&gt;} &amp; \ce{2Ag^{+}(ac) +
-CrO4^{2-}(ac) } &amp; \text{p}K_{\text{s}} = 11.92\\
-    \ce{H2CrO4(ac) + H2O(l)} &amp; \ce{&lt;=&gt;} &amp;
-\ce{HCrO4^{-}(ac) + H3O^{+}(ac)} &amp; \text{p}K_{\text{a}1} = -0.6\\
-    \ce{HCrO4^{-}(ac) + H2O(l)} &amp; \ce{&lt;=&gt;} &amp;
-\ce{CrO4^{2-}(ac) + H3O^{+}(ac)} &amp; \text{p}K_{\text{a}2} = 6.51\\
-\end{array} \]</span></p>
-<p><span class="math display">\[\begin{array}{rl}
-    2\times S &amp; = [\ce{Ag^{+}}] + [\ce{Ag(OH)}] + [\ce{Ag(OH)2^{-}}]
-\\
-    2\times \alpha(\ce{Ag^+})\times S &amp; = [\ce{Ag^{+}}]\\
-    S &amp; = [\ce{CrO4^{2-}}] + [\ce{HCrO4^{-}}] + [\ce{H2CrO4}]\\
-    \alpha(\ce{CrO4^{2-}})\times S &amp; = [\ce{CrO4^{2-}}]\\
-\end{array} \]</span></p>
-<p><span class="math display">\[\begin{array}{rl}
-    K_{\text{s}} &amp; = [\ce{Ag^{+}}]^2[\ce{CrO4^{2-}}] \\
-    &amp;= \left(2\times \alpha(\ce{Ag^+})\times S\right)^2 \times
-\alpha(\ce{CrO4^{2-}})\times S\\
-    &amp;= 4\times \alpha(\ce{Ag^+})^2 \times
-\alpha(\ce{CrO4^{2-}})\times S^3
-\end{array} \]</span></p>
-<p><span class="math display">\[S = \left(\cfrac{K_{\text{s}}}{4\times
-\alpha(\ce{Ag^+})^2 \times
-\alpha(\ce{CrO4^{2-}})}\right)^{\cfrac{1}{3}}\]</span></p>
-</div>
-<div id="fosfato-de-plata" class="section level3">
-<h3>Fosfato de plata</h3>
-<p><span class="math display">\[\begin{array}{rcll}
-    \ce{Ag3PO4(s)} &amp; \ce{&lt;=&gt;} &amp; \ce{3 Ag^{+}(ac) +
-PO4^{3-}(ac) } &amp; \text{p}K_{\text{s}} = 17.55\\
-    \ce{H3PO4(ac) + H2O(l)} &amp; \ce{&lt;=&gt;} &amp; \ce{H2PO4^{-}(ac)
-+ H3O^{+}(ac)} &amp; \text{p}K_{\text{a}1} = 2.148\\
-    \ce{H2PO4^{-}(ac) + H2O(l)} &amp; \ce{&lt;=&gt;} &amp;
-\ce{HPO4^{2-}(ac) + H3O^{+}(ac)} &amp; \text{p}K_{\text{a}2} = 7.198\\
-    \ce{HPO4^{2-}(ac) + H2O(l)} &amp; \ce{&lt;=&gt;} &amp;
-\ce{PO4^{3-}(ac) + H3O^{+}(ac)} &amp; \text{p}K_{\text{a}3} = 12.375\\
-\end{array} \]</span></p>
-<p><span class="math display">\[\begin{array}{rl}
-    3\times S &amp; = [\ce{Ag^{+}}] + [\ce{Ag(OH)}] + [\ce{Ag(OH)2^{-}}]
-\\
-    3\times \alpha(\ce{Ag^+})\times S &amp; = [\ce{Ag^{+}}]\\
-    S &amp; = [\ce{PO4^{3-}}] + [\ce{HPO4^{-}}] + [\ce{H2PO4^{-}}] +
-[\ce{H3PO4}]\\
-    \alpha(\ce{PO4^{3-}})\times S &amp; = [\ce{PO4^{3-}}]\\
-\end{array} \]</span></p>
-<p><span class="math display">\[\begin{array}{rl}
-    K_{\text{s}} &amp; = [\ce{Ag^{+}}]^3[\ce{PO4^{3-}}] \\
-    &amp;= \left(3\times \alpha(\ce{Ag^+})\times S\right)^3 \times
-\alpha(\ce{PO4^{3-}})\times S\\
-    &amp;= 27\times \alpha(\ce{Ag^+})^3 \times
-\alpha(\ce{PO4^{3-}})\times S^4
-\end{array} \]</span></p>
-<p><span class="math display">\[S = \left(\cfrac{K_{\text{s}}}{27\times
-\alpha(\ce{Ag^+})^3 \times
-\alpha(\ce{PO4^{3-}})}\right)^{\cfrac{1}{4}}\]</span></p>
-</div>
 <div id="utilizando-r" class="section level3">
+<h3>Utilizando R</h3>
+<p>Se define las constantes de solubilidad y las concentraciones de cada
+una de las sales.</p>
+<pre class="r"><code>Ks.AgCl &lt;- 10^-9.74
+Ks.AgBr &lt;- 10^-12.3
+Ks.AgI &lt;- 10^-16.08
+cKCl &lt;- 0.0100
+cKBr &lt;- 0.0100
+cKI &lt;- 0.0100</code></pre>
+<p>Se define el pAg entre 0 y 20; y se calcula la concentración de cada
+uno de los haluros.</p>
+<pre class="r"><code>pAg &lt;- seq(0, 20, by = 0.01)
+Ag &lt;- 10^-pAg
+Cl &lt;- Ks.AgCl / Ag
+Cl[Cl &gt; cKCl] &lt;- cKCl
+Br &lt;- Ks.AgBr / Ag
+Br[Br &gt; cKBr] &lt;- cKBr
+I &lt;- Ks.AgI / Ag
+I[I &gt; cKI] &lt;- cKI</code></pre>
+<p>Se acomodan los datos y se construye la gráfica.</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+if (!require(&quot;scales&quot;)) install.packages(&quot;scales&quot;)
+df &lt;- data.frame(x = pAg, Cl, Br, I) %&gt;% 
+  pivot_longer(names_to = &quot;key&quot;, 
+               values_to = &quot;y&quot;,
+               -x)
+
+fig &lt;- ggplot(df,
+              aes(x = x, 
+                  y = y, 
+                  colour = key)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(&quot;Haluro&quot;,
+                     labels = c(bquote(paste(Br^&quot;-&quot;)),
+                                bquote(paste(Cl^&quot;-&quot;)),
+                                bquote(paste(I^&quot;-&quot;))
+                                ),
+                     palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;pAg&quot;,
+       y = &quot;Concentraci\U000F3n / (mol/L)&quot;) +
+  scale_x_continuous(breaks = 0:20) + 
+  scale_y_continuous(trans = log10_trans(),
+                     breaks = trans_breaks(&quot;log10&quot;, function(x) 10^x), 
+                     labels = trans_format(&quot;log10&quot;, math_format(10^.x))) +
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.85, 0.35))
+print(fig)</code></pre>
+<p><img src="precipitacion_fraccionada_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+</div>
+</div>
+<div id="ejercicio-2" class="section level2">
+<h2>Ejercicio 2</h2>
+<p><span class="math inline">\(\require{mhchem}\)</span></p>
+<p>Calcule la curva de precipitación fraccionada en función del pH de la
+siguiente mezcla de sales: <span
+class="math inline">\(\ce{Mn(NO3)2}\)</span> y <span
+class="math inline">\(\ce{Ni(NO3)2}\)</span>, en una solución saturada
+de <span class="math inline">\(\ce{H2S}\)</span> 0.1000 mol/L.</p>
+<p><span class="math display">\[\begin{array}{rcl}
+    \ce{Mn(NO3)2 + H2S} &amp; \ce{-&gt;} &amp; \ce{MnS(s) + 2 HNO3(ac)}
+\\
+    \ce{Ni(NO3)2 + H2S} &amp; \ce{-&gt;} &amp; \ce{NiS(s) + 2 HNO3(ac)}
+\\
+\end{array} \]</span></p>
+<p><span class="math display">\[\begin{array}{rl}
+    [\ce{Mn^{2+}}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{MnS})}{[\ce{S^{2-}}]} \leq c(\ce{Mn(NO3)2})\\
+    [\ce{Ni^{2+}}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{NiS})}{[\ce{S^{2-}}]} \leq c(\ce{Ni(NO3)2})\\
+    [\ce{S^{2-}}] &amp; = \displaystyle \alpha(\ce{S^{2-}}) \times
+c(\ce{H2S}) \\
+    \alpha(\ce{S^{2-}}) &amp; = \displaystyle
+\cfrac{K_{\text{a}1}K_{\text{a}2}}{[\ce{H3O+}]^2 +
+K_{\text{a}1}[\ce{H3O+}] + K_{\text{a}1}K_{\text{a}2}} \\
+\end{array} \]</span></p>
+<div id="utilizando-r-1" class="section level3">
 <h3>Utilizando R</h3>
 <p>Se define la función para calcular los valores de <span
 class="math inline">\(\alpha\)</span> para todas las especies
@@ -462,61 +472,60 @@ class="math inline">\(\alpha\)</span> para todas las especies
   num &lt;- 10^(-pH * (n:0) - cumsum(c(0, pKa)))
   num / sum(num)
 }</code></pre>
-<p>Se crea un vector que corresponde al pH, y se calcula la
-concentración de iones hidroxilo.</p>
-<pre class="r"><code>pH &lt;- seq(0, 14, by = 0.05)
-HO &lt;- 10^(-14 + pH)</code></pre>
-<p>Se calcula el <span class="math inline">\(\alpha(\ce{Ag^+})\)</span>
-en función del pH.</p>
-<pre class="r"><code>alp.Ag &lt;- 1 / (1 + 10^2.00 * HO + 10^3.99 * HO^2)</code></pre>
-<p>Se definen las constantes de acidez para el ácido crómico y el ácido
-fosfórico.</p>
-<pre class="r"><code>pKa.H2CrO4 &lt;- c(-0.6, 6.51)
-pKa.H3PO4 &lt;- c(2.148, 7.198, 12.375)</code></pre>
+<p>Se define las constantes de solubilidad y las concentraciones de cada
+una de las sales.</p>
+<pre class="r"><code>Ks.MnS &lt;- 10^-10.5
+Ks.NiS &lt;- 10^-19.4
+cMnNO3.2 &lt;- 0.0100
+cNiNO3.2 &lt;- 0.0100
+cH2S &lt;- 0.100</code></pre>
+<p>Se crea un vector que corresponde al pH.</p>
+<pre class="r"><code>pH &lt;- seq(0, 14, by = 0.05)</code></pre>
+<p>Se definen las constantes de acidez para el ácido sulfhídrico.</p>
+<pre class="r"><code>pKa.H2S &lt;- c(7.02, 14.0)</code></pre>
 <p>Se calcula el <span class="math inline">\(\alpha\)</span> para todas
-las especies del ácido crómico y ácido fosfórico.</p>
-<pre class="r"><code>alp.HnCrO4 &lt;- t(sapply(pH, alp, pKa.H2CrO4))
-alp.HnPO4 &lt;- t(sapply(pH, alp, pKa.H3PO4))</code></pre>
+las especies del ácido sulfhídrico.</p>
+<pre class="r"><code>alp.HnS &lt;- t(sapply(pH, alp, pKa.H2S))</code></pre>
 <p>Se extrae el <span class="math inline">\(\alpha\)</span> para el ion
-cromato y fosfato.</p>
-<pre class="r"><code>alp.CrO4 &lt;- alp.HnCrO4[,3]
-alp.PO4 &lt;- alp.HnPO4[,4]</code></pre>
-<p>Se calcula la solubidad para todas las sales.</p>
-<pre class="r"><code>S.AgCl &lt;- (10^-9.74 / (alp.Ag))^(1/2)
-S.Ag2CrO4 &lt;- (10^-11.92 / (4 * alp.Ag^2 * alp.CrO4))^(1/3)
-S.Ag3PO4 &lt;- (10^-17.55 / (27 * alp.Ag^3 * alp.PO4))^(1/4)</code></pre>
+sulfuro y se calcula la concentración de este ion.</p>
+<pre class="r"><code>alp.S &lt;- alp.HnS[,3]
+S &lt;- alp.S * cH2S</code></pre>
+<p>Se calcula la concentración de manganeso(II) y níquel(II).</p>
+<pre class="r"><code>Mn &lt;- Ks.MnS / S
+Mn[Mn &gt; cMnNO3.2] &lt;- cMnNO3.2
+Ni &lt;- Ks.NiS / S
+Ni[Ni &gt; cNiNO3.2] &lt;- cNiNO3.2</code></pre>
 <p>Se acomodan los datos y se construye la gráfica.</p>
 <pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
 if (!require(&quot;scales&quot;)) install.packages(&quot;scales&quot;)
-df &lt;- data.frame(x = pH, S.AgCl, S.Ag2CrO4, S.Ag3PO4) %&gt;% 
+df &lt;- data.frame(x = pH, Mn, Ni) %&gt;% 
   pivot_longer(names_to = &quot;key&quot;, 
                values_to = &quot;y&quot;,
                -x)
+
 fig &lt;- ggplot(df,
               aes(x = x, 
                   y = y, 
                   colour = key)
               ) +
   geom_line(size = 1L) +
-  scale_color_brewer(&quot;Sal&quot;,
-                     labels = c(bquote(paste(Ag[2],CrO[4])),
-                                bquote(paste(Ag[3],PO[4])),
-                                bquote(paste(&quot;AgCl&quot;))
+  scale_color_brewer(&quot;Ion&quot;,
+                     labels = c(bquote(paste(Mn^&quot;2+&quot;)),
+                                bquote(paste(Ni^&quot;2+&quot;))
                                 ),
                      palette = &quot;Dark2&quot;, 
                      direction = 1) +
-  coord_cartesian(ylim = c(1e-5, 1)) +
-  scale_x_continuous(breaks = 0:14) + 
+  labs(x = &quot;pH&quot;,
+       y = &quot;Concentraci\U000F3n / (mol/L)&quot;) +
+  scale_x_continuous(breaks = 0:20) + 
   scale_y_continuous(trans = log10_trans(),
                      breaks = trans_breaks(&quot;log10&quot;, function(x) 10^x), 
                      labels = trans_format(&quot;log10&quot;, math_format(10^.x))) +
-  labs(x = &quot;pH&quot;,
-       y = &quot;Solubilidad / (mol/L)&quot;) +
   theme_bw() + 
   theme(text = element_text(size = 16),
-        legend.position = c(0.65, 0.65))
+        legend.position = c(0.15, 0.35))
 print(fig)</code></pre>
-<p><img src="Solubilidad_pH_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p><img src="precipitacion_fraccionada_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
 </div>
 </div>
 
