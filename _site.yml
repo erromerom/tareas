@@ -11,6 +11,8 @@ navbar:
       href: Tareas.html
     - text: "Solubilidad y pH"
       href: Solubilidad_pH.html
+    - text: "Titulación Precipitacion"
+      href: Titulacion_precipitacion.html
 output:
   html_document:
     theme: darkly

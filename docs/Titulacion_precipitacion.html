@@ -11,7 +11,7 @@
 
 
 
-<title>About This Website</title>
+<title>Curva de titulación de reacciones de precipitación</title>
 
 <script src="site_libs/header-attrs-2.16/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -352,12 +352,112 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">About This Website</h1>
+<h1 class="title toc-ignore">Curva de titulación de reacciones de
+precipitación</h1>
 
 </div>
 
 
-<p>More about this website.</p>
+<div id="ejercicio" class="section level2">
+<h2>Ejercicio</h2>
+<p><span class="math inline">\(\require{mhchem}\)</span></p>
+<p>Calcule la curva de titulación de 25.00 mL de la mezcla de <span
+class="math inline">\(\ce{KCl}\)</span>, <span
+class="math inline">\(\ce{KBr}\)</span> y <span
+class="math inline">\(\ce{KI}\)</span> los cuales tienen concentraciones
+iguales a 0.0100 mol/L, con <span
+class="math inline">\(\ce{AgNO3}\)</span> 0.0200 mol/L.</p>
+<p><span class="math display">\[\begin{array}{rcl}
+    \ce{KCl + AgNO3} &amp; \ce{-&gt;} &amp; \ce{AgCl(s) + KNO3(ac)} \\
+    \ce{KBr + AgNO3} &amp; \ce{-&gt;} &amp; \ce{AgBr(s) + KNO3(ac)} \\
+    \ce{KI + AgNO3}  &amp; \ce{-&gt;} &amp; \ce{AgI(s) + KNO3(ac)} \\
+\end{array} \]</span></p>
+<div id="balance-de-masas" class="section level3">
+<h3>Balance de masas</h3>
+<p><span class="math display">\[\begin{array}{rl}
+    c(\ce{Cl^-}) &amp; = \displaystyle \cfrac{0.0100\times 25.00}{25.00
++ V_{\text{T}}} \\
+    c(\ce{Br^-}) &amp; = \displaystyle \cfrac{0.0100\times 25.00}{25.00
++ V_{\text{T}}} \\
+    c(\ce{I^-}) &amp; = \displaystyle \cfrac{0.0100\times 25.00}{25.00 +
+V_{\text{T}}} \\
+    c(\ce{NO3^-}) &amp; = \displaystyle \cfrac{0.0100\times
+V_{\text{T}}}{25.00 + V_{\text{T}}} \\
+    c(\ce{K^+}) &amp; = \displaystyle c(\ce{Cl^-}) + c(\ce{Br^-}) +
+c(\ce{I^-}) \\
+\end{array} \]</span></p>
+</div>
+<div id="pseudo-balance-de-cargas" class="section level3">
+<h3>pseudo balance de cargas</h3>
+<p><span class="math display">\[[\ce{Ag^+}] + [\ce{K^+}] - [\ce{Cl^-}] -
+[\ce{Br^-}] - [\ce{I^-}] - [\ce{NO3^-}] = 0\]</span></p>
+<p><span class="math display">\[\begin{array}{rl}
+    [\ce{Ag^+}] &amp; = \displaystyle 10^{-\ce{pAg}} \\
+    [\ce{Cl^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgCl})}{[\ce{Ag^+}]} \leq c(\ce{Cl^-})\\
+    [\ce{Br^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgBr})}{[\ce{Ag^+}]} \leq c(\ce{Br^-})\\
+    [\ce{I^-}] &amp; = \displaystyle
+\cfrac{K_{\text{s}}(\ce{AgI})}{[\ce{Ag^+}]} \leq c(\ce{I^-})\\
+    [\ce{NO3^-}] &amp; = c(\ce{NO3^-})\\
+    [\ce{K^+}] &amp; = c(\ce{K^+}) \\
+\end{array} \]</span></p>
+</div>
+<div id="utilizando-r" class="section level3">
+<h3>Utilizando R</h3>
+<p>Se define las constantes de solubilidad, el volumen de la alícuota y
+las concentraciones de cada una de las sales.</p>
+<pre class="r"><code>Ks.AgCl &lt;- 10^-9.74
+Ks.AgBr &lt;- 10^-12.3
+Ks.AgI &lt;- 10^-16.08
+VA &lt;- 25.00
+cKCl &lt;- 0.0100
+cKBr &lt;- 0.0100
+cKI &lt;- 0.0100
+cAgNO3 &lt;- 0.0200</code></pre>
+<p>Se define la función que depende del volumen de titulante y del
+pAg.</p>
+<pre class="r"><code>curva &lt;- function(pAg, VT){
+  cCl &lt;- cKCl * VA / (VA + VT)
+  cBr &lt;- cKBr * VA / (VA + VT)
+  cI &lt;- cKI * VA / (VA + VT)
+  K  &lt;- cCl + cBr + cI
+  NO3 &lt;- cAgNO3 * VT / (VA + VT)
+  Ag &lt;- 10^-pAg
+  if(Ks.AgCl / Ag &gt; cCl) {Cl &lt;- cCl} else {Cl &lt;- Ks.AgCl / Ag}
+  if(Ks.AgBr / Ag &gt; cBr) {Br &lt;- cBr} else {Br &lt;- Ks.AgBr / Ag}
+  if(Ks.AgI / Ag &gt; cI) {I &lt;- cI} else {I &lt;- Ks.AgI / Ag}
+  Ag + K - Cl - Br - I - NO3
+}</code></pre>
+<p>Se define el volumen de titulante y se calcula el valor pAg para cada
+volumen de titulante.</p>
+<pre class="r"><code>Vf &lt;- (cKCl + cKBr + cKI) * VA / cAgNO3 * 1.5
+VT &lt;- seq(0.01, Vf, by = 0.01)
+pAg &lt;- sapply(VT, function(x)
+  uniroot(curva, VT = x, interval = c(0,50), tol = 1e-14)$root)</code></pre>
+<p>Se acomodan los datos y se construye la gráfica.</p>
+<pre class="r"><code>if (!require(&quot;tidyverse&quot;)) install.packages(&quot;tidyverse&quot;)
+if (!require(&quot;scales&quot;)) install.packages(&quot;scales&quot;)
+df &lt;- data.frame(x = VT, y = pAg)
+
+fig &lt;- ggplot(df,
+              aes(x = x, 
+                  y = y)
+              ) +
+  geom_line(size = 1L) +
+  scale_color_brewer(palette = &quot;Dark2&quot;, 
+                     direction = 1) +
+  labs(x = &quot;Volumen de titulante / mL&quot;,
+       y = &quot;pAg&quot;) +
+  scale_x_continuous(breaks = seq(0, 50, by = 5)) + 
+  scale_y_continuous(breaks = seq(0, 20, by = 2)) + 
+  theme_bw() + 
+  theme(text = element_text(size = 16),
+        legend.position = c(0.65, 0.65))
+print(fig)</code></pre>
+<p><img src="Titulacion_precipitacion_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+</div>
 
 
 
