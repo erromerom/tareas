@@ -17,6 +17,6 @@ navbar:
       href: Titulacion_precipitacion.html
 output:
   html_document:
-    theme: darkly
+    theme: united
     toc: true
     toc_float: true
