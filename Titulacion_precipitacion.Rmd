@@ -20,7 +20,7 @@ $$\begin{array}{rl}
     c(\ce{Cl^-}) & = \displaystyle \cfrac{0.0100\times 25.00}{25.00 + V_{\text{T}}} \\
     c(\ce{Br^-}) & = \displaystyle \cfrac{0.0100\times 25.00}{25.00 + V_{\text{T}}} \\
     c(\ce{I^-}) & = \displaystyle \cfrac{0.0100\times 25.00}{25.00 + V_{\text{T}}} \\
-    c(\ce{NO3^-}) & = \displaystyle \cfrac{0.0100\times V_{\text{T}}}{25.00 + V_{\text{T}}} \\
+    c(\ce{NO3^-}) & = \displaystyle \cfrac{0.0200\times V_{\text{T}}}{25.00 + V_{\text{T}}} \\
     c(\ce{K^+}) & = \displaystyle c(\ce{Cl^-}) + c(\ce{Br^-}) + c(\ce{I^-}) \\
 \end{array} $$
 
